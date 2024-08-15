@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
+            console.log('Fetched data:', data); // デバッグ用にデータを出力
             return data;
         } catch (error) {
             console.error('Error fetching dictionary data:', error);
@@ -43,6 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const searchValue = searchInput.value.toLowerCase();
         const searchTypeValue = searchType.value;
         const searchOptionValue = searchOption.value;
+
+        // データの存在を確認
+        if (!data[searchOptionValue]) {
+            console.error(`Data for '${searchOptionValue}' not found in the dictionary.`);
+            return;
+        }
+
         const results = [];
 
         data[searchOptionValue].forEach(word => {
