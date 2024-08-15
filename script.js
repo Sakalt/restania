@@ -36,33 +36,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Display initial word cards function
     const displayInitialCards = async () => {
         const data = await fetchDictionaryData();
-        if (!data) {
-            wordCards.innerHTML = "<p>データの読み込みに失敗しました。</p>";
+        if (!data || !data["レスタニア語"] || !data["レスタニア語"]["基本的な会話"]) {
+            console.error('レスタニア語の「基本的な会話」カテゴリが見つかりませんでした。');
+            wordCards.innerHTML = "<p>データが見つかりませんでした。</p>";
             return;
         }
 
-        // Default display is "基本的な会話" category
-        const defaultOption = "基本的な会話";
-        if (!data[defaultOption]) {
-            console.error(`Category '${defaultOption}' not found in the dictionary.`);
-            wordCards.innerHTML = "<p>カテゴリが見つかりませんでした。</p>";
-            return;
-        }
-
-        if (!Array.isArray(data[defaultOption])) {
-            console.error(`Expected an array for '${defaultOption}', but got ${typeof data[defaultOption]}.`);
-            wordCards.innerHTML = "<p>データ形式が正しくありません。</p>";
-            return;
-        }
-
-        wordCards.innerHTML = data[defaultOption].map(createWordCard).join("");
+        wordCards.innerHTML = data["レスタニア語"]["基本的な会話"].map(createWordCard).join("");
     };
 
     // Display search results function
     const displayResults = async () => {
         const data = await fetchDictionaryData();
-        if (!data) {
-            wordCards.innerHTML = "<p>データの読み込みに失敗しました。</p>";
+        if (!data || !data["レスタニア語"]) {
+            console.error('レスタニア語のデータが見つかりませんでした。');
+            wordCards.innerHTML = "<p>データが見つかりませんでした。</p>";
             return;
         }
 
@@ -70,23 +58,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         const searchTypeValue = searchType.value;
         const searchOptionValue = searchOption.value;
 
-        // Validate the data's existence and type
-        if (!data[searchOptionValue]) {
-            console.error(`Data for '${searchOptionValue}' not found in the dictionary.`);
+        if (!data["レスタニア語"][searchOptionValue]) {
+            console.error(`カテゴリ '${searchOptionValue}' が見つかりませんでした。`);
             wordCards.innerHTML = "<p>データが見つかりませんでした。</p>";
             return;
         }
 
-        if (!Array.isArray(data[searchOptionValue])) {
-            console.error(`Expected an array for '${searchOptionValue}', but got ${typeof data[searchOptionValue]}.`);
-            wordCards.innerHTML = "<p>データ形式が正しくありません。</p>";
-            return;
-        }
-
         const results = [];
-
-        data[searchOptionValue].forEach(word => {
-            const searchField = searchOptionValue === "日本語訳検索" ? word["日本語訳"].toLowerCase() : word["架空言語訳"].toLowerCase();
+        data["レスタニア語"][searchOptionValue].forEach(word => {
+            const searchField = searchOptionValue === "基本的な会話" ? word["日本語訳"].toLowerCase() : word["架空言語訳"].toLowerCase();
             if (
                 (searchTypeValue === "partial" && searchField.includes(searchValue)) ||
                 (searchTypeValue === "exact" && searchField === searchValue) ||
