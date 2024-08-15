@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        // Default display is "日本語訳検索"
+        // Default display is "基本的な会話" category
         const defaultOption = "基本的な会話";
         if (!Array.isArray(data[defaultOption])) {
             console.error(`Expected an array for '${defaultOption}', but got ${typeof data[defaultOption]}.`);
