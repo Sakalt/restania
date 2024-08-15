@@ -45,9 +45,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const searchTypeValue = searchType.value;
         const searchOptionValue = searchOption.value;
 
-        // データの存在を確認
+        // データの存在と型を確認
         if (!data[searchOptionValue]) {
             console.error(`Data for '${searchOptionValue}' not found in the dictionary.`);
+            wordCards.innerHTML = "<p>データが見つかりませんでした。</p>";
+            return;
+        }
+
+        if (!Array.isArray(data[searchOptionValue])) {
+            console.error(`Expected an array for '${searchOptionValue}', but got ${typeof data[searchOptionValue]}.`);
+            wordCards.innerHTML = "<p>データ形式が正しくありません。</p>";
             return;
         }
 
