@@ -37,11 +37,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     const displayInitialCards = async () => {
         const data = await fetchDictionaryData();
         if (!data) {
+            wordCards.innerHTML = "<p>データの読み込みに失敗しました。</p>";
             return;
         }
 
         // Default display is "基本的な会話" category
         const defaultOption = "基本的な会話";
+        if (!data[defaultOption]) {
+            console.error(`Category '${defaultOption}' not found in the dictionary.`);
+            wordCards.innerHTML = "<p>カテゴリが見つかりませんでした。</p>";
+            return;
+        }
+
         if (!Array.isArray(data[defaultOption])) {
             console.error(`Expected an array for '${defaultOption}', but got ${typeof data[defaultOption]}.`);
             wordCards.innerHTML = "<p>データ形式が正しくありません。</p>";
@@ -55,6 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const displayResults = async () => {
         const data = await fetchDictionaryData();
         if (!data) {
+            wordCards.innerHTML = "<p>データの読み込みに失敗しました。</p>";
             return;
         }
 
