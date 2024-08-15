@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const searchInput = document.getElementById('searchInput');
     const searchType = document.getElementById('searchType');
     const searchOption = document.getElementById('searchOption');
@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log('Fetched data:', data); // デバッグ用にデータを出力
             return data;
         } catch (error) {
             console.error('Error fetching dictionary data:', error);
@@ -32,6 +31,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p><strong>古語:</strong> ${word["古語"]}</p>
             </div>
         `;
+    };
+
+    // 初期表示のための単語カードを表示する関数
+    const displayInitialCards = async () => {
+        const data = await fetchDictionaryData();
+        if (!data) {
+            return;
+        }
+
+        // デフォルトで「日本語訳検索」のデータを表示
+        const defaultOption = "日本語訳検索";
+        if (!Array.isArray(data[defaultOption])) {
+            console.error(`Expected an array for '${defaultOption}', but got ${typeof data[defaultOption]}.`);
+            wordCards.innerHTML = "<p>データ形式が正しくありません。</p>";
+            return;
+        }
+
+        wordCards.innerHTML = data[defaultOption].map(createWordCard).join("");
     };
 
     // 検索結果を表示する関数
@@ -73,6 +90,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         wordCards.innerHTML = results.length > 0 ? results.map(createWordCard).join("") : "<p>該当する単語が見つかりませんでした。</p>";
     };
+
+    // 初期表示
+    displayInitialCards();
 
     searchButton.addEventListener('click', displayResults);
 });
