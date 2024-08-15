@@ -7,9 +7,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 辞書データを取得する関数
     const fetchDictionaryData = async () => {
-        const response = await fetch('data.json');
-        const data = await response.json();
-        return data;
+        try {
+            const response = await fetch('data.json');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching dictionary data:', error);
+        }
     };
 
     // 単語カードを生成する関数
@@ -29,13 +36,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // 検索結果を表示する関数
     const displayResults = async () => {
         const data = await fetchDictionaryData();
+        if (!data) {
+            return;
+        }
+
         const searchValue = searchInput.value.toLowerCase();
         const searchTypeValue = searchType.value;
         const searchOptionValue = searchOption.value;
         const results = [];
 
         data[searchOptionValue].forEach(word => {
-            const searchField = searchOptionValue === "japanese" ? word["日本語訳"].toLowerCase() : word["架空言語訳"].toLowerCase();
+            const searchField = searchOptionValue === "日本語訳検索" ? word["日本語訳"].toLowerCase() : word["架空言語訳"].toLowerCase();
             if (
                 (searchTypeValue === "partial" && searchField.includes(searchValue)) ||
                 (searchTypeValue === "exact" && searchField === searchValue) ||
@@ -45,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        wordCards.innerHTML = results.map(createWordCard).join("");
+        wordCards.innerHTML = results.length > 0 ? results.map(createWordCard).join("") : "<p>該当する単語が見つかりませんでした。</p>";
     };
 
     searchButton.addEventListener('click', displayResults);
