@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const searchButton = document.getElementById('searchButton');
     const wordCards = document.getElementById('wordCards');
 
-    // 辞書データを取得する関数
+    // Fetch dictionary data function
     const fetchDictionaryData = async () => {
         try {
             const response = await fetch('data.json');
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 
-    // 単語カードを生成する関数
+    // Create word card function
     const createWordCard = (word) => {
         return `
             <div class="card">
@@ -33,15 +33,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
     };
 
-    // 初期表示のための単語カードを表示する関数
+    // Display initial word cards function
     const displayInitialCards = async () => {
         const data = await fetchDictionaryData();
         if (!data) {
             return;
         }
 
-        // デフォルトで「日本語訳検索」のデータを表示
-        const defaultOption = "日本語訳検索";
+        // Default display is "日本語訳検索"
+        const defaultOption = "基本的な会話";
         if (!Array.isArray(data[defaultOption])) {
             console.error(`Expected an array for '${defaultOption}', but got ${typeof data[defaultOption]}.`);
             wordCards.innerHTML = "<p>データ形式が正しくありません。</p>";
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         wordCards.innerHTML = data[defaultOption].map(createWordCard).join("");
     };
 
-    // 検索結果を表示する関数
+    // Display search results function
     const displayResults = async () => {
         const data = await fetchDictionaryData();
         if (!data) {
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const searchTypeValue = searchType.value;
         const searchOptionValue = searchOption.value;
 
-        // データの存在と型を確認
+        // Validate the data's existence and type
         if (!data[searchOptionValue]) {
             console.error(`Data for '${searchOptionValue}' not found in the dictionary.`);
             wordCards.innerHTML = "<p>データが見つかりませんでした。</p>";
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         wordCards.innerHTML = results.length > 0 ? results.map(createWordCard).join("") : "<p>該当する単語が見つかりませんでした。</p>";
     };
 
-    // 初期表示
+    // Initial display
     displayInitialCards();
 
     searchButton.addEventListener('click', displayResults);
